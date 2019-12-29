@@ -46,7 +46,7 @@ public class CIT2 extends IntervalT2MF_Prototype{
      /**
      * Constructor for the CIT2 fuzzy set.
      * 
-     * @param name
+     * @param name Name of the set
      * @param generator_set The T1 generator set used to generate the CIT2 set
      * @param left_AES Number of AES at the left of the generator set i.e. the AES obtained by shifting the generator set to the left
      * @param right_AES Number of AES at the right of the generator set i.e. the AES obtained by shifting the generator set to the right

@@ -18,7 +18,7 @@ public class CIT2_SupportComparator implements Comparator<CIT2>{
      * Compares the left endpoint of the support set of 
      * @param a the first set to compare
      * @param b the second set to compare
-     * @return -1 if support_a.getLeft()<support_b.getLeft(); 1 support_b.getLeft()<support_a.getLeft(); 0 otherwise
+     * @return -1 if support_a.getLeft() smaller than support_b.getLeft(); 1 support_b.getLeft() bigger than support_a.getLeft(); 0 otherwise
      */
     @Override
     public int compare(CIT2 a, CIT2 b)
