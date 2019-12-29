@@ -5,11 +5,11 @@
  */
 package examples;
 
-import cit2.CIT2;
-import cit2.CIT2_Antecedent;
-import cit2.CIT2_Consequent;
-import cit2.CIT2_Rule;
-import cit2.CIT2_Rulebase;
+import CIT2.CIT2;
+import CIT2.CIT2_Antecedent;
+import CIT2.CIT2_Consequent;
+import CIT2.CIT2_Rule;
+import CIT2.CIT2_Rulebase;
 import generic.Input;
 import generic.Output;
 import generic.Tuple;
@@ -18,6 +18,7 @@ import java.util.Random;
 import tools.JFreeChartPlotter;
 import type1.sets.T1MF_Interface;
 import type1.sets.T1MF_Triangular;
+import CIT2_Generator.T1MF_Generator_Triangular;
 
 /**
  *
@@ -41,14 +42,14 @@ public class Test {
         Input input_6=new Input("6.", new Tuple(-2,12));
         Input input_7=new Input("7.", new Tuple(-2,12));
         Output output=new Output("", new Tuple(-2,12));
-        T1MF_Triangular one=new T1MF_Triangular("ONE", 0,1,2);
-        T1MF_Triangular two=new T1MF_Triangular("TWO", 1,2,3);
-        T1MF_Triangular three=new T1MF_Triangular("THREE",2,3,4);
+        T1MF_Generator_Triangular one=new T1MF_Generator_Triangular("ONE", 0,1,2);
+        T1MF_Generator_Triangular two=new T1MF_Generator_Triangular("TWO", 1,2,3);
+        T1MF_Generator_Triangular three=new T1MF_Generator_Triangular("THREE",2,3,4);
         
-        T1MF_Triangular four=new T1MF_Triangular("FOUR", 3,4,5);
-        T1MF_Triangular five=new T1MF_Triangular("FIVE", 4,5,6);
-        T1MF_Triangular six=new T1MF_Triangular("SIX", 5,6,7);
-        T1MF_Triangular seven=new T1MF_Triangular("SEVEN", 6,7,8);
+        T1MF_Generator_Triangular four=new T1MF_Generator_Triangular("FOUR", 3,4,5);
+        T1MF_Generator_Triangular five=new T1MF_Generator_Triangular("FIVE", 4,5,6);
+        T1MF_Generator_Triangular six=new T1MF_Generator_Triangular("SIX", 5,6,7);
+        T1MF_Generator_Triangular seven=new T1MF_Generator_Triangular("SEVEN", 6,7,8);
         
         CIT2 one_ct2=new CIT2("1", one, 1, 1, 0.25);
         CIT2 two_ct2=new CIT2("2", two, 1,1,0.25);

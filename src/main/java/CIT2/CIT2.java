@@ -3,17 +3,20 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package cit2;
+package CIT2;
 
 
+import CIT2_Generator.CIT2_Generator;
+import additional_IT2MF.IntervalT2MF_Generic;
 import generic.*;
+import tools.TupleOperations;
 import type1.sets.T1MF_Interface;
-import intervalType2.sets.IntervalT2MF_Generic;
 import intervalType2.sets.IntervalT2MF_Interface;
 import intervalType2.sets.IntervalT2MF_Prototype;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import tools.JFreeChartPlotter;
+//import CIT2_Generator.T1MF_Shifted_MF;
 
 /**
  * Class implementing a CIT2 fuzzy set
@@ -69,9 +72,9 @@ public class CIT2 extends IntervalT2MF_Prototype{
      /**
      * Constructor for the CIT2 fuzzy set. Equivalent to CIT2(name, generator_set, 1, 1 shifting_step)
      * 
-     * @param name
+     * @param name The name of the set
      * @param generator_set The T1 generator set used to generate the CIT2 set
-     * @param shifting_step distance between the generator set and the leftmost/rightmost AES
+     * @param shifting_step Distance between the generator set and the leftmost/rightmost AES
      */
     
     public CIT2(String name, CIT2_Generator generator_set, double shifting_step)
@@ -84,12 +87,6 @@ public class CIT2 extends IntervalT2MF_Prototype{
         return shiftingStep;
     }
     
-    @Override
-    public CIT2 clone()
-    {
-        //To clone, simply create a new CIT2 using a cloned generator set
-        return new CIT2(name, generatorSet.clone(), leftAES, rightAES, shiftingStep);
-    }
     
     /**
      * Sets the support set for the CIT2 set
@@ -104,13 +101,13 @@ public class CIT2 extends IntervalT2MF_Prototype{
         {
             for(T1MF_Interface current_aes:embeddedSets)
             {
-                current_aes.setSupport(Tuple.intersection(support, current_aes.getSupport()));
+                current_aes.setSupport(TupleOperations.intersection(support, current_aes.getSupport()));
             }  
         }
         if(uMF!=null)
-            uMF.setSupport(Tuple.intersection(support, uMF.getSupport()));
+            uMF.setSupport(TupleOperations.intersection(support, uMF.getSupport()));
         if(lMF!=null)
-            lMF.setSupport(Tuple.intersection(support, lMF.getSupport()));
+            lMF.setSupport(TupleOperations.intersection(support, lMF.getSupport()));
     }
     
     public int getLeftShifts()
@@ -130,12 +127,12 @@ public class CIT2 extends IntervalT2MF_Prototype{
     
     private void initializeUpperbound()
     {
-        uMF=new FOUBoundaryCIT2(name, CIT2_Boundary_Type.UPPERBOUND, embeddedSets[0], embeddedSets[embeddedSets.length-1], generatorSet, leftAES*shiftingStep, shiftingStep*rightAES);
+        uMF=new CIT2_Boundary(name, CIT2_Boundary_Type.UPPERBOUND, embeddedSets[0], embeddedSets[embeddedSets.length-1], generatorSet, leftAES*shiftingStep, shiftingStep*rightAES);
     }
     
     private void initializeLowerbound()
     {
-        lMF=new FOUBoundaryCIT2(name, CIT2_Boundary_Type.LOWERBOUND, embeddedSets[0], embeddedSets[embeddedSets.length-1], generatorSet, shiftingStep*rightAES, shiftingStep*leftAES);
+        lMF=new CIT2_Boundary(name, CIT2_Boundary_Type.LOWERBOUND, embeddedSets[0], embeddedSets[embeddedSets.length-1], generatorSet, shiftingStep*rightAES, shiftingStep*leftAES);
     }
     
     public T1MF_Interface getUpperbound()
@@ -237,7 +234,8 @@ public class CIT2 extends IntervalT2MF_Prototype{
         {
             shift_name=name+" left shift "+i;
             //Shift the generator to create an AES
-            shifts[i]=generatorSet.shiftFunction(name, offset);
+            shifts[i]=generatorSet.shiftFunction(shift_name, offset);
+            //shifts[i]=new T1MF_Shifted_MF(generatorSet, offset);
             offset+=shiftingStep;
             index++;
         }
@@ -249,7 +247,8 @@ public class CIT2 extends IntervalT2MF_Prototype{
         {
             shift_name=name+" right shift "+i;
             //Shift the generator set to create an AES
-            shifts[index]=generatorSet.shiftFunction(name, offset);
+            shifts[index]=generatorSet.shiftFunction(shift_name, offset);
+            //shifts[index]=new T1MF_Shifted_MF(generatorSet, offset);
             offset+=shiftingStep;
             index++;
         }
@@ -278,8 +277,8 @@ public class CIT2 extends IntervalT2MF_Prototype{
         if(left_max_shift==right_max_shift)
             right_max_shift=left_max_shift+0.0001;
         double randomValue = ThreadLocalRandom.current().nextDouble(left_max_shift, right_max_shift);
-        //System.out.println(rand);
         return generatorSet.shiftFunction("", randomValue);
+        //return new T1MF_Shifted_MF(generatorSet, randomValue);
     }
     
     private Random getRandom()

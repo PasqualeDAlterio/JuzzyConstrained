@@ -5,25 +5,19 @@
  */
 package examples;
 
-import cit2.CIT2;
-import cit2.CIT2_Antecedent;
-import cit2.CIT2_Consequent;
-import cit2.CIT2_Rule;
-import cit2.CIT2_Rulebase;
-import cit2.ExplainableCentroid;
+import CIT2.CIT2;
+import CIT2.CIT2_Antecedent;
+import CIT2.CIT2_Consequent;
+import CIT2.CIT2_Rule;
+import CIT2.CIT2_Rulebase;
+import CIT2_Explanations.ExplainableCentroid;
 import generic.Input;
 import generic.Output;
 import generic.Tuple;
 import intervalType2.sets.IntervalT2MF_Interface;
 import tools.JFreeChartPlotter;
-import type1.sets.T1MF_Gauangle;
-import type1.sets.T1MF_Gaussian;
+import CIT2_Generator.*;
 import type1.sets.T1MF_Interface;
-import type1.sets.T1MF_Triangular;
-import type1.system.T1_Antecedent;
-import type1.system.T1_Consequent;
-import type1.system.T1_Rule;
-import type1.system.T1_Rulebase;
 
 /**
  *
@@ -37,33 +31,38 @@ public class Example {
     }
     public void runExample()
     {
-        Input food, service;
-        Output tip;
+
         double shifting_size_1=1, shifting_size_2=0.5;
         //Define the inputs
-        food = new Input("Food Quality", new Tuple(0,10));      //a rating given by a person between 0 and 10
-        service = new Input("Service Level", new Tuple(0,10));  //a rating given by a person between 0 and 10
-        tip = new Output("Tip", new Tuple(0,30));               //a percentage for the tip
+        Input food = new Input("Food Quality", new Tuple(0,10));      //a rating given by a person between 0 and 10
+        Input service = new Input("Service Level", new Tuple(0,10));  //a rating given by a person between 0 and 10
+        Output tip = new Output("Tip", new Tuple(0,30));               //a percentage for the tip
 
-        //Set up the membership functions (MFs) for each input and output
-        T1MF_Triangular badFoodMF = new T1MF_Triangular("MF for bad food",0.0, 0.0, 10.0);
-        T1MF_Triangular greatFoodMF = new T1MF_Triangular("MF for great food",0.0, 10.0, 10.0);
+        //Set up the membership functions for each input and output
+        T1MF_Generator_Triangular badFoodMF = new T1MF_Generator_Triangular("Bad",0.0, 0.0, 10.0);
+        badFoodMF.setLeftShoulder(true);
+        T1MF_Generator_Triangular greatFoodMF = new T1MF_Generator_Triangular("Great",0.0, 10.0, 10.0);
+        greatFoodMF.setRightShoulder(true);
         
-        T1MF_Gauangle unfriendlyServiceMF = new T1MF_Gauangle("MF for unfriendly service",0.0, 0.0, 6.0);
+        T1MF_Generator_Gauangle unfriendlyServiceMF = new T1MF_Generator_Gauangle("Unfriendly",0.0, 0.0, 6.0);
         unfriendlyServiceMF.setLeftShoulder(true);
-        T1MF_Gauangle okServiceMF = new T1MF_Gauangle("MF for ok service",2.5, 5.0, 7.5);
-        T1MF_Gauangle friendlyServiceMF = new T1MF_Gauangle("MF for friendly service",4.0, 10.0, 10.0);
+        T1MF_Generator_Gauangle okServiceMF = new T1MF_Generator_Gauangle("OK",2.5, 5.0, 7.5);
+        T1MF_Generator_Gauangle friendlyServiceMF = new T1MF_Generator_Gauangle("Friendly",4.0, 10.0, 10.0);
         friendlyServiceMF.setRightShoulder(true);
 
-        T1MF_Gaussian lowTipMF = new T1MF_Gaussian("Low tip", 0.0, 6.0);
-        T1MF_Gaussian mediumTipMF = new T1MF_Gaussian("Medium tip", 15.0, 6.0);
-        T1MF_Gaussian highTipMF = new T1MF_Gaussian("High tip", 30.0, 6.0);
+        T1MF_Generator_Gaussian lowTipMF = new T1MF_Generator_Gaussian("Low", 0.0, 6.0);
+        lowTipMF.setLeftShoulder(true);
+        T1MF_Generator_Gaussian mediumTipMF = new T1MF_Generator_Gaussian("Medium", 15.0, 6.0);
+        T1MF_Generator_Gaussian highTipMF = new T1MF_Generator_Gaussian("High", 30.0, 6.0);
+        highTipMF.setRightShoulder(true);
+        
         
         //Generate the CIT2 MFs using the T1 sets as generator sets
         CIT2 cit2_badFoodMF = new CIT2(badFoodMF.getName(), badFoodMF, shifting_size_2);
         CIT2 cit2_greatFoodMF = new CIT2(greatFoodMF.getName(), greatFoodMF, shifting_size_2);
 
-        CIT2 cit2_unfriendlyServiceMF = new CIT2(unfriendlyServiceMF.getName(), unfriendlyServiceMF, shifting_size_2);
+        CIT2 cit2_unfriendlyServiceMF = new CIT2(unfriendlyServiceMF.getName(), unfriendlyServiceMF,
+                shifting_size_2);
         CIT2 cit2_okServiceMF = new CIT2(okServiceMF.getName(), okServiceMF, shifting_size_2);
         CIT2 cit2_friendlyServiceMF = new CIT2(friendlyServiceMF.getName(), friendlyServiceMF, shifting_size_2);
 
@@ -96,16 +95,29 @@ public class Example {
         food.setInput(7);
         service.setInput(8);
         
-        ExplainableCentroid result=rulebase.explainableDefuzzification(1000);
+        Tuple constrained_centroid_sampling=rulebase.samplingDefuzzification(50);
+        
+        Tuple constrained_centroid_si=rulebase.switchIndexDefuzzification(100);
+        
+        ExplainableCentroid result=rulebase.explainableDefuzzification(100);
+
+        JFreeChartPlotter.plotMFs("Food partitioning", new CIT2[]{cit2_badFoodMF,
+            cit2_greatFoodMF}, food.getDomain(), 1000);
+        JFreeChartPlotter.plotMFs("Service partitioning", new CIT2[]{cit2_friendlyServiceMF,
+            cit2_okServiceMF, cit2_unfriendlyServiceMF}, service.getDomain(), 1000);
+        JFreeChartPlotter.plotMFs("Tip partitioning", new CIT2[]{cit2_lowTipMF,
+            cit2_mediumTipMF, cit2_highTipMF}, tip.getDomain(), 1000);
+        
+        
         T1MF_Interface left_aes=result.getMax_es(), right_aes=result.getMin_es();
-        JFreeChartPlotter.plotMFs("Food partitioning", new CIT2[]{cit2_badFoodMF, cit2_greatFoodMF}, food.getDomain(), 1000);
-        JFreeChartPlotter.plotMFs("Service partitioning", new CIT2[]{cit2_friendlyServiceMF, cit2_okServiceMF, cit2_unfriendlyServiceMF}, service.getDomain(), 1000);
-        JFreeChartPlotter.plotMFs("Tip partitioning", new CIT2[]{cit2_lowTipMF, cit2_mediumTipMF, cit2_highTipMF}, tip.getDomain(), 1000);
-        JFreeChartPlotter.plotMFs("Resulting FOU", new IntervalT2MF_Interface[]{rulebase.getFiredFOU()}, tip.getDomain(), 1000);
-        JFreeChartPlotter.plotMFs("AES determining the endpoints", new T1MF_Interface[]{left_aes, right_aes}, tip.getDomain(), 1000);
+        
+        JFreeChartPlotter.plotMFs("Resulting FOU", new IntervalT2MF_Interface[]{rulebase.getFiredFOU()}, 
+                tip.getDomain(), 1000);
+        JFreeChartPlotter.plotMFs("AES determining the endpoints", new T1MF_Interface[]{left_aes, right_aes}, 
+                tip.getDomain(), 1000);
         System.out.println("The recommended tip percentage is in the range: "+result.getIntervalCentroid());
         //Print the explanations
         System.out.println(result.printableExplanation());
-        
+
     }
 }

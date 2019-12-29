@@ -41,7 +41,7 @@ public class JFreeChartPlotter {
         XYPlot plot=chart.getXYPlot();
         XYSeriesCollection discretized_mfs=new XYSeriesCollection();
         int k=0;
-        HashSet<StringBuilder> series_is=new HashSet<>();
+        HashSet<String> series_is=new HashSet<>();
         ValueAxis domainAxis = plot.getDomainAxis();
         ValueAxis rangeAxis = plot.getRangeAxis();
         //Discretize the boundary functions
@@ -125,18 +125,18 @@ public class JFreeChartPlotter {
     private static XYSeriesCollection discretizeIntervalMembershipFunction(IntervalT2MF_Interface set, int points, Tuple axis_range)
     {
         XYSeriesCollection distretized_boundaries=new XYSeriesCollection();
-        HashSet<StringBuilder> series_id=new HashSet<>();
+        HashSet<String> series_id=new HashSet<>();
         distretized_boundaries.addSeries(discretizeMembershipFunction(set.getUMF(), points, axis_range, series_id));
         distretized_boundaries.addSeries(discretizeMembershipFunction(set.getLMF(), points, axis_range, series_id));
         return distretized_boundaries;
     }
     
-    public static XYSeries discretizeMembershipFunction(T1MF_Interface set, int points, Tuple axis_range, HashSet<StringBuilder> series_ids)
+    public static XYSeries discretizeMembershipFunction(T1MF_Interface set, int points, Tuple axis_range, HashSet<String> series_ids)
     {
-        StringBuilder current_id=new StringBuilder(set.getName());
+        String current_id=set.getName();
         //Find a suitable ID that has not been used before
         while(!series_ids.add(current_id))
-            current_id.append(" (duplicate)");
+            current_id+=(" (duplicate)");
         XYSeries discretized_mf=new XYSeries(current_id);
         for(double i=axis_range.getLeft();i<axis_range.getRight();i+=axis_range.getSize()/points)
             discretized_mf.add(i, set.getFS(i));

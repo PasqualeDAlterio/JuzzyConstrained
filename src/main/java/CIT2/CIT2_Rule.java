@@ -3,15 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package cit2;
+package CIT2;
 
 
-import generic.InferenceType;
+import additional_IT2MF.IntervalT2MF_Generic;
+import additional_T1MF.T1MF_InferenceResult;
+import tools.InferenceType;
 import tools.TNorm;
 import generic.Tuple;
-import intervalType2.sets.IntervalT2MF_Generic;
 import intervalType2.sets.IntervalT2MF_Interface;
-import intervalType2.sets.IntervalT2MF_Intersection;
 import intervalType2.system.*;
 import java.util.ArrayList;
 import type1.sets.*;
@@ -126,7 +126,7 @@ public class CIT2_Rule {
      * @param t_norm the T-norm used to implement
      * @return the Tuple containing the firing interval
      */
-    protected Tuple getFiringStrength(TNorm t_norm)
+    public Tuple getFiringStrength(TNorm t_norm)
     {
         Tuple current_fuzzified_value;
         ArrayList<Tuple> fuzzified_inputs=new ArrayList<>(antecedents.length);
@@ -241,8 +241,8 @@ public class CIT2_Rule {
             }
         }
     }
-    
-        /**
+        
+    /**
      * Expands the current rule into a set of T1 ones by replacing each CIT2 set with one of its AES. All the possible combinations are generated
      */
     private void expandCurrentRule()

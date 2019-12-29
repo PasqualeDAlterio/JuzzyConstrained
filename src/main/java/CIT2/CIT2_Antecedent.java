@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package cit2;
+package CIT2;
 
 import generic.Input;
 import generic.Tuple;
@@ -42,7 +42,11 @@ public class CIT2_Antecedent {
     @Override
     public CIT2_Antecedent clone()
     {
-        return new CIT2_Antecedent(set, input.clone());
+        Input new_input=new Input();
+        new_input.setDomain(input.getDomain());
+        new_input.setInput(input.getInput());
+        new_input.setName(input.getName());
+        return new CIT2_Antecedent(set, new_input);
     }
     
 }

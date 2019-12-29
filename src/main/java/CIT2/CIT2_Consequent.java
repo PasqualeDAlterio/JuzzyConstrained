@@ -3,10 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package cit2;
+package CIT2;
 
 import generic.Output;
 import generic.Tuple;
+import tools.TupleOperations;
 
 /**
  * CIT2 consequent
@@ -27,13 +28,15 @@ public class CIT2_Consequent {
     {
         this.mf=mf;
         this.output=output;
-        this.mf.setSupport(Tuple.intersection(mf.getSupport(), output.getDomain()));
+        this.mf.setSupport(TupleOperations.intersection(mf.getSupport(), output.getDomain()));
     }
     
     @Override
     public CIT2_Consequent clone()
     {
-        return new CIT2_Consequent(mf, output.clone());
+        Output new_output=new Output(output.getName(), output.getDomain());
+        new_output.setDomain(output.getDomain());
+        return new CIT2_Consequent(mf, new_output);
     }
          
     public CIT2 getCIT2()

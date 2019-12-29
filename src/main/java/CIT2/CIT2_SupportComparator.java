@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package cit2;
+package CIT2;
 
 import generic.Tuple;
 import java.util.Comparator;

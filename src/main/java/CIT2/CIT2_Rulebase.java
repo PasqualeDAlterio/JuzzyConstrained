@@ -3,8 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package cit2;
+package CIT2;
 
+import CIT2_Explanations.RuleExplanation;
+import CIT2_Explanations.ExplainableCentroid;
+import CIT2_Generator.CIT2_Generator;
+import additional_T1MF.T1MF_InferenceResult;
 import generic.*;
 import intervalType2.sets.*;
 import intervalType2.system.*;
@@ -34,7 +38,7 @@ public class CIT2_Rulebase implements FuzzyRulebase{
      */
     public CIT2_Rulebase(CIT2_Rule[] rules)
     {
-        CIT2Rules.addAll(CIT2Rules);
+        CIT2Rules.addAll(Arrays.asList(rules));
     }
     /**
      * Builds a CIT2 rulebase with 0 rules
@@ -54,59 +58,7 @@ public class CIT2_Rulebase implements FuzzyRulebase{
         return CIT2Rules.add(current_rule);
     }
     
-    @Override
-    public CIT2_Rulebase clone()
-    {
-        //Maps the Outputs of the current rulebase to their clones
-        HashMap<Output,Output> cloned_output=new HashMap<>();
-        //Maps the Inputs of the current rulebase to their clones
-        HashMap<Input, Input> cloned_input=new HashMap<>();
-        CIT2_Rule[] ct2_rules=new CIT2_Rule[CIT2Rules.size()];
-        int rule_index=0;
-        CIT2_Antecedent[] cloned_antecedents;
-        CIT2_Antecedent[] antecedents;
-        CIT2_Consequent[] cloned_consequents;
-        CIT2_Consequent[] consequents;
-        CIT2_Antecedent current_antecedent;
-        CIT2_Consequent current_consequent;
-        CIT2 cloned_ct2;
-        Input current_input;
-        Output current_output;
-        //Clones each rule of the rulebase...
-        for(CIT2_Rule current_rule : CIT2Rules)
-        {
-            cloned_antecedents=new CIT2_Antecedent[current_rule.getAntecedents().length];
-            antecedents=current_rule.getAntecedents();
-            //...to do so, clone all the antecedents...
-            for(int i=0;i<current_rule.getAntecedents().length;i++)
-            {
-                current_antecedent=antecedents[i];
-                cloned_ct2=current_antecedent.getCIT2();
-                current_input=current_antecedent.getInput();
-                //Checks if the current Input has already been cloned, if not, it clones it and adds it to the map
-                if(cloned_input.get(current_input)==null)
-                    cloned_input.put(current_input, current_input.clone());
-                cloned_antecedents[i]=new CIT2_Antecedent(cloned_ct2, cloned_input.get(current_input));
-            }
-            consequents=current_rule.getConsequents();
-            cloned_consequents=new CIT2_Consequent[consequents.length];
-            //... and then all the consequents
-            for(int i=0;i<current_rule.getConsequents().length;i++)
-            {
-                current_consequent=consequents[i];
-                cloned_ct2=current_consequent.getCIT2();
-                current_output=current_consequent.getOutput();
-                //Checks if the current Output has already been cloned, if not, it clones it and adds it to the map
-                if(cloned_output.get(current_output)==null)
-                    cloned_output.put(current_output, current_output.clone());
-                cloned_consequents[i]=new CIT2_Consequent(cloned_ct2, cloned_output.get(current_output));
-            }
-            //CURRENTLY ONLY SUPPORTING CIT2 RULES WITH A SINGLE CONSEQUENT
-            ct2_rules[rule_index]=new CIT2_Rule(cloned_antecedents, cloned_consequents[0]);
-            rule_index++;
-        }
-        return new CIT2_Rulebase(ct2_rules);
-    }
+
     
     public ArrayList<CIT2_Rule> getRules()
     {
@@ -116,7 +68,7 @@ public class CIT2_Rulebase implements FuzzyRulebase{
     @Override
     public double getCentroid()
     {
-        return this.switchIndexCentroid(100).getAverage();
+        return this.switchIndexDefuzzification(100).getAverage();
     }
     
     /**
@@ -153,7 +105,7 @@ public class CIT2_Rulebase implements FuzzyRulebase{
                     t1_to_ct2.put(current_T1_set, new CIT2(current_T1_set.getName()+" CIT2", (CIT2_Generator)current_T1_set, left_AES, right_AES, shifting_size));
 
                 }
-                current_ct2_antecedents[i]=new CIT2_Antecedent((CIT2)t1_to_ct2.get(current_T1_set), current_T1_antecedent.getInput());
+                current_ct2_antecedents[i]=new CIT2_Antecedent(t1_to_ct2.get(current_T1_set), current_T1_antecedent.getInput());
                 i++;
             }
             i=0;
@@ -169,7 +121,7 @@ public class CIT2_Rulebase implements FuzzyRulebase{
                     t1_to_ct2.put(current_T1_set, new CIT2(current_T1_set.getName()+" CIT2", (CIT2_Generator)current_T1_set, left_AES, right_AES, shifting_size));
                 }
 
-                current_ct2_consequents[i]=new CIT2_Consequent((CIT2)t1_to_ct2.get(current_T1_set), current_T1_consequent.getOutput());
+                current_ct2_consequents[i]=new CIT2_Consequent(t1_to_ct2.get(current_T1_set), current_T1_consequent.getOutput());
                 i++;
             }
             //CURRENTLY ONLY SUPPORTING CIT2 RULES WITH A SINGLE CONSEQUENT
@@ -384,7 +336,7 @@ public class CIT2_Rulebase implements FuzzyRulebase{
      * @param discretization The discretization level to use
      * @return The interval centroid as a Tuple
      */
-    public Tuple switchIndexCentroid(int discretization)
+    public Tuple switchIndexDefuzzification(int discretization)
     {
         //Run switch index saying that an explanation must not be produced
         return doSwitchIndexDefuzzification(discretization, false).getIntervalCentroid();
@@ -498,7 +450,7 @@ public class CIT2_Rulebase implements FuzzyRulebase{
      * @param samples Number of samples to produce
      * @return The interval centroid obtained through the sampling technique
      */
-    public Tuple sampleCentroid(int samples)
+    public Tuple samplingDefuzzification(int samples)
     {
         T1_Rulebase sampled_rulebase;
         //Variable that checks if none of the samples systems produces a valid output
