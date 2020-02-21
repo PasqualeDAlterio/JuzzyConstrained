@@ -17,11 +17,10 @@ import type1.system.*;
  * @author Pasquale
  */
 public class CIT2_Rule {
-    private InferenceType AND_OPERATOR=InferenceType.MIN;
-    private CIT2_Antecedent[] antecedents;
-    private CIT2_Consequent[] consequents;
-    private ArrayList<T1_Rule> correspondingT1Rules;
-    
+    private final InferenceType AND_OPERATOR=InferenceType.MIN;
+    private final CIT2_Antecedent[] antecedents;
+    private final CIT2_Consequent[] consequents;
+
     /**
      * Constructor with multiple consequents (currently not available because some operations only work single-consequent rules)
      * @param antecedents the antecedents of the rule
@@ -41,18 +40,6 @@ public class CIT2_Rule {
     public CIT2_Rule(CIT2_Antecedent[] antecedents, CIT2_Consequent consequent)
     {
         this(antecedents, new CIT2_Consequent[]{consequent});
-    }
-    
-    /**
-     * Returns the set of T1 rules obtained by replacing each CIT2 set in the rule with one of its AES. The rule will be expanded if it has never been expanded before
-     * @return the array containing the set of T1 rules from the expansion
-     */
-    public T1_Rule[] getExpandedT1Rules()
-    {
-        //If it has never been expanded before, do the expansion
-        if(correspondingT1Rules==null)
-            expandCurrentRule();
-        return correspondingT1Rules.toArray(new T1_Rule[0]);
     }
     
         public CIT2_Antecedent[] getAntecedents()
@@ -215,72 +202,5 @@ public class CIT2_Rule {
     
     //---------------------------------------------------Rule expansion section ------------------------------------------------------------
     
-    private void doExpansion(T1_Antecedent[][] antecedents, T1_Consequent[][] consequents, ArrayList<T1_Antecedent> current_antecedents, int row)
-    {
-        ArrayList<T1_Antecedent> antecedents_clone;
-        if(current_antecedents==null)
-            current_antecedents=new ArrayList<>();
-        if(row>=antecedents.length)
-            createRule(current_antecedents, consequents);
-        else
-        {
-            for(T1_Antecedent current_embedded_set : antecedents[row])
-            {
-                antecedents_clone=(ArrayList<T1_Antecedent>)current_antecedents.clone();
-                antecedents_clone.add(current_embedded_set);
-                doExpansion(antecedents, consequents, antecedents_clone, row+1);
-            }
-        }
-    }
-        
-    /**
-     * Expands the current rule into a set of T1 ones by replacing each CIT2 set with one of its AES. All the possible combinations are generated
-     */
-    private void expandCurrentRule()
-    {
-        int row_index=0, column_index;
-        correspondingT1Rules=new ArrayList<>();
-        T1_Antecedent[][] t1_antecedents=new T1_Antecedent[antecedents.length][antecedents[0].getCIT2().getEmbeddedSets().length];
-        T1_Consequent[][] t1_consequents=new T1_Consequent[consequents.length][consequents[0].getCIT2().getEmbeddedSets().length];
-        //Generate the T1 antecedents by replacing the CIT2 antecedent with each of its AES
-        for(CIT2_Antecedent current_antecedent : antecedents)
-        {
-            column_index=0;
-            for(T1MF_Interface current_embedded_set : current_antecedent.getCIT2().getEmbeddedSets())
-            {
-                t1_antecedents[row_index][column_index]=new T1_Antecedent(current_embedded_set, current_antecedent.getInput());
-                column_index++;
-            }
-            row_index++;
-        }
-        row_index=0;
-        //Generate the T1 consequents by replacing the CIT2 antecedent with each of its AES
-        for(CIT2_Consequent current_consequent: consequents)
-        {
-            column_index=0;
-            for(T1MF_Interface current_embedded_set : current_consequent.getCIT2().getEmbeddedSets())
-            {
-                t1_consequents[row_index][column_index]=new T1_Consequent(current_embedded_set, current_consequent.getOutput());
-                column_index++;
-            }
-            row_index++;
-        }
-        //Once the antecedents and consequents have been generated, the rules can be allocated
-        doExpansion(t1_antecedents, t1_consequents, null, 0);
-    }
-    
-        
-    private void createRule(ArrayList<T1_Antecedent> current_antecedents, T1_Consequent[][] consequents)
-    {
-        T1_Antecedent[] antecedents_array=current_antecedents.toArray(new T1_Antecedent[0]);
-        for(int i=0;i<consequents.length;i++)
-        {
-            for(int j=0;j<consequents[0].length;j++)
-            { 
-                correspondingT1Rules.add(new T1_Rule(antecedents_array, consequents[i][j]));
-            }
 
-        }
-    }
-    
 }

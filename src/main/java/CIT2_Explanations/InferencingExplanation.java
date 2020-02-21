@@ -3,10 +3,10 @@ package CIT2_Explanations;
 import generic.Tuple;
 
 /**
- *
+ * Contains the name of the MF, the Tuple used to do the inference and the name of the variable it refers to
  * @author Pasquale
  */
-public class InferencingExplanation {
+class InferencingExplanation {
     
     private final String MFName, variableName;
     private final Tuple inferencingValue;

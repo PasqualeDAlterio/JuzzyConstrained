@@ -65,12 +65,10 @@ public class CIT2_Rulebase{
     /**
      * Builds a CIT2 rulebase starting from a T1 one. They have the same rules but each T1 is used as a generator set to build the corresponding CIT2 set
      * @param t1_rulebase The rulebase to start from
-     * @param left_AES Number of AES at the left of the generator set
-     * @param right_AES Number of AES at the right of the generator set
      * @param displacement_as_uod_percentage Size of the displacement set in terms of the percentage of the UOD
      * @return The CIT2 rulebase built using the T1 sets in t1_rulebase as generator sets
      */
-    static public CIT2_Rulebase fromT1Rulebase(T1_Rulebase t1_rulebase, int left_AES, int right_AES, double displacement_as_uod_percentage)
+    static public CIT2_Rulebase fromT1Rulebase(T1_Rulebase t1_rulebase, double displacement_as_uod_percentage)
     {
         CIT2_Rule[] rules=new CIT2_Rule[t1_rulebase.getRules().size()];
         CIT2_Antecedent[] current_ct2_antecedents;
@@ -93,7 +91,7 @@ public class CIT2_Rulebase{
                 if(t1_to_ct2.get(current_T1_set)==null)
                 {
                     shifting_size=(displacement_as_uod_percentage*current_T1_antecedent.getInput().getDomain().getSize()/200);
-                    t1_to_ct2.put(current_T1_set, new CIT2(current_T1_set.getName()+" CIT2", (CIT2_Generator)current_T1_set, left_AES, right_AES, shifting_size));
+                    t1_to_ct2.put(current_T1_set, new CIT2(current_T1_set.getName()+" CIT2", (CIT2_Generator)current_T1_set, shifting_size));
 
                 }
                 current_ct2_antecedents[i]=new CIT2_Antecedent(t1_to_ct2.get(current_T1_set), current_T1_antecedent.getInput());
@@ -109,7 +107,7 @@ public class CIT2_Rulebase{
                 if(t1_to_ct2.get(current_T1_set)==null)
                 {
                     shifting_size=(displacement_as_uod_percentage*current_T1_consequent.getOutput().getDomain().getSize()/200);
-                    t1_to_ct2.put(current_T1_set, new CIT2(current_T1_set.getName()+" CIT2", (CIT2_Generator)current_T1_set, left_AES, right_AES, shifting_size));
+                    t1_to_ct2.put(current_T1_set, new CIT2(current_T1_set.getName()+" CIT2", (CIT2_Generator)current_T1_set, shifting_size));
                 }
 
                 current_ct2_consequents[i]=new CIT2_Consequent(t1_to_ct2.get(current_T1_set), current_T1_consequent.getOutput());
@@ -292,7 +290,7 @@ public class CIT2_Rulebase{
             current_consequent=consequent_mfs[i];
             //... note that the left endpoint of the firing strength of the rule has been used...
             current_rule=firing_intervals.get(current_consequent).getRight().getRight();
-            explaination_left_endpoint.add(new Pair<CIT2, RuleExplanation>(current_consequent, new RuleExplanation(current_rule, true)));
+            explaination_left_endpoint.add(new Pair<>(current_consequent, new RuleExplanation(current_rule, true)));
         }
         //...after the switch index...
         for(int i=left_switch_index;i<consequent_mfs.length;i++)
@@ -300,7 +298,7 @@ public class CIT2_Rulebase{
             current_consequent=consequent_mfs[i];
             //...note that the right endpoint of the firing strenght of the rule has been used
             current_rule=firing_intervals.get(current_consequent).getRight().getLeft();
-            explaination_left_endpoint.add(new Pair<CIT2, RuleExplanation>(current_consequent, new RuleExplanation(current_rule, false)));
+            explaination_left_endpoint.add(new Pair<>(current_consequent, new RuleExplanation(current_rule, false)));
         }
         //Build explainations for the right endpoint
         //Before the switch index...
@@ -309,7 +307,7 @@ public class CIT2_Rulebase{
             current_consequent=consequent_mfs[i];
             //...note that the right endpoint of the firing strength of the rule has been used...
             current_rule=firing_intervals.get(current_consequent).getRight().getLeft();
-            explaination_right_endpoint.add(new Pair<CIT2, RuleExplanation>(current_consequent, new RuleExplanation(current_rule, false)));
+            explaination_right_endpoint.add(new Pair<>(current_consequent, new RuleExplanation(current_rule, false)));
         }
         //After the switch index...
         for(int i=right_switch_index;i<consequent_mfs.length;i++)
@@ -317,7 +315,7 @@ public class CIT2_Rulebase{
             //...note that the left endpoint of the firing strength of the rule has been used
             current_consequent=consequent_mfs[i];
             current_rule=firing_intervals.get(current_consequent).getRight().getRight();
-            explaination_right_endpoint.add(new Pair<CIT2, RuleExplanation>(current_consequent, new RuleExplanation(current_rule, true)));
+            explaination_right_endpoint.add(new Pair<>(current_consequent, new RuleExplanation(current_rule, true)));
         }
         return new ExplainableCentroid(centroid_value, getFiredFOU(), explaination_left_endpoint, explaination_right_endpoint, min_aes, max_aes, output);
     }
@@ -405,7 +403,7 @@ public class CIT2_Rulebase{
         if(isLeftEndpoint)
         {
             //... get the leftmost AES...
-            chosen_es=set.getEmbeddedSets()[0];
+            chosen_es=set.getLeftmostAES();
             //... if the index of set is bigger than (or equal to) the switch index, use the lower value for the inference, otherwise use the higher one
             if(current_index>=curr_switch_index)
                 truncation_height=truncations.getLeft();
@@ -416,7 +414,7 @@ public class CIT2_Rulebase{
         else
         {
             //...get the rightmost AES...
-            chosen_es=set.getEmbeddedSets()[set.getEmbeddedSets().length-1];
+            chosen_es=set.getRightmostAES();
             //... if the index of set is bigger than (or equal to) the switch index, use the higher value for the inference, otherwise use lower higher one
             if(current_index>=curr_switch_index)
             {
@@ -548,7 +546,7 @@ public class CIT2_Rulebase{
             current_cuts=current_rule.getFiringStrength(MinimumTNorm.getInstance());
             //If there was no firing interval in the map for the current consequent CIT2, add it
             if(firing_intervals.get(current_consequent)==null)
-                firing_intervals.put(current_consequent, new Pair(current_cuts, new Pair(current_rule, current_rule)));
+                firing_intervals.put(current_consequent, new Pair<>(current_cuts, new Pair<>(current_rule, current_rule)));
             //Otherwise, check if an update is needed for the firing interval for the current consequent set in the map
             else
             {
@@ -574,7 +572,7 @@ public class CIT2_Rulebase{
                     new_rules[1]=current_rule;
                 }
                 //Update the map
-                firing_intervals.put(current_consequent, new Pair(old_firing_interval, new Pair(new_rules[0], new_rules[1])));
+                firing_intervals.put(current_consequent, new Pair<>(old_firing_interval, new Pair<>(new_rules[0], new_rules[1])));
             }
         }
         return firing_intervals;

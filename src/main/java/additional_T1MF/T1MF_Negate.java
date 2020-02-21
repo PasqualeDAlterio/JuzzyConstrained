@@ -10,7 +10,7 @@ import type1.sets.T1MF_Prototype;
  */
 public class T1MF_Negate extends T1MF_Prototype {
     
-    private T1MF_Interface toNegate;
+    private final T1MF_Interface toNegate;
     
     public T1MF_Negate(String name, T1MF_Interface to_negate, Tuple support)
     {

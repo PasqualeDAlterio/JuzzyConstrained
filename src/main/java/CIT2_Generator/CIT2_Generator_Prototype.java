@@ -13,7 +13,7 @@ import type1.sets.T1MF_Prototype;
 abstract class CIT2_Generator_Prototype extends T1MF_Prototype implements CIT2_Generator{
     
     protected Collection<Interval> minPoints, maxPoints;
-    protected T1MF_Interface T1MF;
+    protected final T1MF_Interface T1MF;
     
     public CIT2_Generator_Prototype(String name, T1MF_Interface t1_mf)
     {

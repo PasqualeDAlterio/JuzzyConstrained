@@ -11,13 +11,13 @@ import type1.sets.T1MF_Prototype;
  * @author Pasquale
  */
 public class CIT2_Boundary extends T1MF_Prototype{
-    
-    //First and last embedded sets in the FOU
-    private final CIT2_Generator firstEmbeddedSet, lastEmbeddedSet;
+
+    //Leftmost and rightmost embedded sets in the FOU
+    private final CIT2_Generator leftmostAES, rightmostAES;
     //The generator set used to generate the set
     private final CIT2_Generator generatorSet;
-    //Left and right shifting applied to the generator set to obtain the FOU
-    private final double leftShifting, rightShifting;
+    //The displacement interval used to generate the CIT2 set
+    private final Tuple displacementInterval;
     //Boundary type to specify if it is the lowerbound or the upperbound MF
     private final CIT2_Boundary_Type type;
     
@@ -25,24 +25,20 @@ public class CIT2_Boundary extends T1MF_Prototype{
      * Constructor of the boundary
      * @param name Name of the boundary
      * @param type Specifies if it is a lowerbound or an upperbound
-     * @param first_embedded_set First embedded set in the FOU
-     * @param last_embedded_set Last embedded set in the FOU
+     * @param leftmost_aes Leftmost embedded set in the FOU
+     * @param rightmost_aes Rightmost embedded set in the FOU
      * @param generator_set The generator set used to generate the set
-     * @param left_shifting Maximum left shifting of the generator set to generate the FOU (i.e. left endpoint of the displacement set)
-     * @param right_shifting Maximum right shifting of the generator set to generate the FOU (i.e. right endpoint of the displacement set)
+     * @param displacement_interval The displacement interval used to generate the set
      */
-    public CIT2_Boundary(String name, CIT2_Boundary_Type type, CIT2_Generator first_embedded_set, CIT2_Generator last_embedded_set, CIT2_Generator generator_set, double left_shifting, double right_shifting)
+    public CIT2_Boundary(String name, CIT2_Boundary_Type type,  CIT2_Generator generator_set, CIT2_Generator leftmost_aes, CIT2_Generator rightmost_aes, Tuple displacement_interval)
     {
         super(name);
         this.type=type;
-        firstEmbeddedSet=first_embedded_set;
-        lastEmbeddedSet=last_embedded_set;
+        leftmostAES =leftmost_aes;
+        rightmostAES =rightmost_aes;
         generatorSet=generator_set;
-        leftShifting=left_shifting;
-        rightShifting=right_shifting;
-        support=(new Tuple(first_embedded_set.getSupport().getLeft(), last_embedded_set.getSupport().getRight()));
-        if(support.getLeft()>support.getRight())
-            System.out.println("ERROR");
+        displacementInterval=displacement_interval;
+        support=(new Tuple(leftmost_aes.getSupport().getLeft(), rightmost_aes.getSupport().getRight()));
     }
 
     /**
@@ -67,13 +63,13 @@ public class CIT2_Boundary extends T1MF_Prototype{
         if(type==CIT2_Boundary_Type.LOWERBOUND)
         {
             //The lowerbound is given by the min membership degree of the first and last ES and the potential min points in the range [x-leftShifting; x+rigthShifting]
-            partial_result=Math.min(firstEmbeddedSet.getFS(x), lastEmbeddedSet.getFS(x));
+            partial_result=Math.min(leftmostAES.getFS(x), rightmostAES.getFS(x));
             if(min_max_point!=-1)
                 return Math.min(partial_result, min_max_point);
             return partial_result;
 
         }
-        partial_result=Math.max(firstEmbeddedSet.getFS(x), lastEmbeddedSet.getFS(x));
+        partial_result=Math.max(leftmostAES.getFS(x), rightmostAES.getFS(x));
         if(min_max_point!=-1)
             //The upperbound is given by the max membership degree of the first and last ES and the potential max points in the range [x-leftShifting; x+rigthShifting]
             return Math.max(partial_result, min_max_point);
@@ -93,7 +89,7 @@ public class CIT2_Boundary extends T1MF_Prototype{
         double final_membership_value=-1, current_membership_degree;
         for(Interval current_interval : intervals)
         {
-            if(current_interval.getLeft()-leftShifting<=x&&current_interval.getRight()+rightShifting>=x)
+            if(current_interval.getLeft()+displacementInterval.getLeft()<=x&&current_interval.getRight()+displacementInterval.getRight()>=x)
             {
                 current_membership_degree=generatorSet.getFS(current_interval.getLeft());
                 if(type==CIT2_Boundary_Type.LOWERBOUND&&(current_membership_degree<final_membership_value||final_membership_value==-1))
@@ -123,7 +119,7 @@ public class CIT2_Boundary extends T1MF_Prototype{
         
     public CIT2_Boundary clone()
     {
-        return new CIT2_Boundary(name, type, firstEmbeddedSet.clone(), lastEmbeddedSet.clone(), generatorSet, leftShifting, rightShifting);
+        return new CIT2_Boundary(name, type, leftmostAES.clone(), rightmostAES.clone(), generatorSet.clone(), displacementInterval.clone());
     }
     
 }

@@ -11,7 +11,7 @@ import type1.sets.T1MF_Prototype;
  */
 public class T1MF_Generator_Negate extends T1MF_Prototype implements CIT2_Generator{
     
-    private CIT2_Generator toNegate;
+    private final CIT2_Generator toNegate;
     
     public T1MF_Generator_Negate(String name, CIT2_Generator to_negate)
     {
