@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package CIT2;
 
 
@@ -49,15 +44,15 @@ public class CIT2_Rule {
     }
     
     /**
-     * Returns the set of T1 rules obtained from the expansion of the current CIT2 rule. The rule will be expanded if it has never been expanded before
-     * @return the array containing the set of T1 rules obtained after the expansion
+     * Returns the set of T1 rules obtained by replacing each CIT2 set in the rule with one of its AES. The rule will be expanded if it has never been expanded before
+     * @return the array containing the set of T1 rules from the expansion
      */
     public T1_Rule[] getExpandedT1Rules()
     {
         //If it has never been expanded before, do the expansion
         if(correspondingT1Rules==null)
             expandCurrentRule();
-        return (T1_Rule[])correspondingT1Rules.toArray();
+        return correspondingT1Rules.toArray(new T1_Rule[0]);
     }
     
         public CIT2_Antecedent[] getAntecedents()
@@ -75,7 +70,7 @@ public class CIT2_Rule {
      * Computes the T1 rule obtained by replacing each CIT2 set with its generator set
      * @return the rule obtained by replacing each CIT2 set with its generator set
      */
-    T1_Rule getGeneratorRule()
+    public T1_Rule getGeneratorRule()
     {
         T1_Antecedent[] rule_antecedents=new T1_Antecedent[this.antecedents.length];
         T1_Consequent[] rule_consequents=new T1_Consequent[this.consequents.length];
@@ -100,23 +95,19 @@ public class CIT2_Rule {
      * Converts the current rule to an equivalent IT2 (i.e. the IT2 sets in the rule are the equivalent of the CIT2 sets in the CIT2 rule)
      * @return the equivalent IT2 rule
      */
-    IT2_Rule toIT2()
+    public IT2_Rule toIT2()
     {
         IT2_Antecedent[] it2_antecedents=new IT2_Antecedent[antecedents.length];
         IT2_Consequent[] it2_consequents=new IT2_Consequent[consequents.length];
-        int index=0;
         //Convert each antecedent to an equivalent IT2 one
-        for(CIT2_Antecedent current_antecedent : antecedents)
+        for(int index=0;index<antecedents.length;index++)
         {
             it2_antecedents[index]=new IT2_Antecedent(antecedents[index].getCIT2().toIT2(), antecedents[index].getInput());
-            index++;
         }
         //Convert each consequent to an equivalent one
-        index=0;
-        for(CIT2_Consequent current_consequent : consequents)
+        for(int index=0;index<consequents.length;index++)
         {
             it2_consequents[index]=new IT2_Consequent(consequents[index].getCIT2().toIT2(), consequents[index].getOutput());
-            index++;
         }
         return new IT2_Rule(it2_antecedents, it2_consequents);
     }
@@ -126,15 +117,15 @@ public class CIT2_Rule {
      * @param t_norm the T-norm used to implement
      * @return the Tuple containing the firing interval
      */
-    public Tuple getFiringStrength(TNorm t_norm)
+    public Tuple getFiringStrength(TNorm<Tuple> t_norm)
     {
         Tuple current_fuzzified_value;
         ArrayList<Tuple> fuzzified_inputs=new ArrayList<>(antecedents.length);
         for(CIT2_Antecedent current_antecedent: antecedents)
         {
             current_fuzzified_value=new Tuple();
-            current_fuzzified_value.setRight(current_antecedent.getCIT2().getUpperbound().getFS(current_antecedent.getInput().getInput()));
-            current_fuzzified_value.setLeft(current_antecedent.getCIT2().getLowerbound().getFS(current_antecedent.getInput().getInput()));
+            current_fuzzified_value.setRight(current_antecedent.getCIT2().getUMF().getFS(current_antecedent.getInput().getInput()));
+            current_fuzzified_value.setLeft(current_antecedent.getCIT2().getLMF().getFS(current_antecedent.getInput().getInput()));
             fuzzified_inputs.add(current_fuzzified_value);
         }
         return t_norm.doTNorm(fuzzified_inputs);
@@ -203,8 +194,8 @@ public class CIT2_Rule {
         double current_upperbound_fs, current_lowerbound_fs;
         for(CIT2_Antecedent current_antecedent: antecedents)
         {
-            current_upperbound_fs=current_antecedent.getCIT2().getUpperbound().getFS(current_antecedent.getInput().getInput());
-            current_lowerbound_fs=current_antecedent.getCIT2().getLowerbound().getFS(current_antecedent.getInput().getInput());
+            current_upperbound_fs=current_antecedent.getCIT2().getUMF().getFS(current_antecedent.getInput().getInput());
+            current_lowerbound_fs=current_antecedent.getCIT2().getLMF().getFS(current_antecedent.getInput().getInput());
             if(AND_OPERATOR==InferenceType.MIN)
             {
                 result.setRight(Math.min(result.getRight(), current_upperbound_fs));
@@ -235,7 +226,7 @@ public class CIT2_Rule {
         {
             for(T1_Antecedent current_embedded_set : antecedents[row])
             {
-                antecedents_clone=(ArrayList)current_antecedents.clone();
+                antecedents_clone=(ArrayList<T1_Antecedent>)current_antecedents.clone();
                 antecedents_clone.add(current_embedded_set);
                 doExpansion(antecedents, consequents, antecedents_clone, row+1);
             }
@@ -251,8 +242,6 @@ public class CIT2_Rule {
         correspondingT1Rules=new ArrayList<>();
         T1_Antecedent[][] t1_antecedents=new T1_Antecedent[antecedents.length][antecedents[0].getCIT2().getEmbeddedSets().length];
         T1_Consequent[][] t1_consequents=new T1_Consequent[consequents.length][consequents[0].getCIT2().getEmbeddedSets().length];
-        T1_Antecedent[] rule_antecedents;
-        T1_Consequent[] rule_consequents;
         //Generate the T1 antecedents by replacing the CIT2 antecedent with each of its AES
         for(CIT2_Antecedent current_antecedent : antecedents)
         {

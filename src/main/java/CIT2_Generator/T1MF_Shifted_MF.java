@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package CIT2_Generator;
 
 import generic.Tuple;
@@ -14,7 +9,7 @@ import type1.sets.T1MF_Prototype;
 
 /**
  *
- * @author User
+ * @author Pasquale
  */
 public class T1MF_Shifted_MF extends T1MF_Prototype implements CIT2_Generator{
     
@@ -58,7 +53,7 @@ public class T1MF_Shifted_MF extends T1MF_Prototype implements CIT2_Generator{
         initializeSupportSet();
     }
     
-    private final void initializeSupportSet()
+    private void initializeSupportSet()
     {
         double left, right;
         //If the MF to shift is a shoulder, the  left endpoint of the support set must not be changed
@@ -73,7 +68,7 @@ public class T1MF_Shifted_MF extends T1MF_Prototype implements CIT2_Generator{
         support=new Tuple(left, right);
     }
     
-    private final void initializeMinMaxPoints()
+    private void initializeMinMaxPoints()
     {
         minPoints=shiftIntervals(MFtoShift.getMinPoints());
         maxPoints=shiftIntervals(MFtoShift.getMaxPoints());
@@ -125,5 +120,11 @@ public class T1MF_Shifted_MF extends T1MF_Prototype implements CIT2_Generator{
         double membership_degree= MFtoShift.getFS(x-shiftingFactor);
         MFtoShift.setSupport(mf_support);
         return membership_degree;
+    }
+    
+    @Override
+    public T1MF_Shifted_MF clone()
+    {
+        return new T1MF_Shifted_MF(MFtoShift, shiftingFactor);
     }
 }

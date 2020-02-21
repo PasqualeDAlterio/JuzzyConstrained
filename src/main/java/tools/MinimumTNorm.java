@@ -1,20 +1,15 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package tools;
 
 import generic.Tuple;
 import java.util.List;
 
 /**
- * Minimum T-Norm implemented using the factory design pattern
- * @author psxpd2admin
+ * Minimum T-Norm used in IT2 inference implemented using the singleton design pattern
+ * @author Pasquale
  */
-public class MinimumTNorm implements TNorm{
+public class MinimumTNorm implements TNorm<Tuple>{
     
-    static private MinimumTNorm factoryElement=null;
+    static private MinimumTNorm instance=null;
     
     private MinimumTNorm()
     {
@@ -33,10 +28,10 @@ public class MinimumTNorm implements TNorm{
         return result;
     }
     
-    public static MinimumTNorm factoryMethod()
+    public static MinimumTNorm getInstance()
     {
-        if(factoryElement==null)
-            factoryElement=new MinimumTNorm();
-        return factoryElement;
+        if(instance==null)
+            instance=new MinimumTNorm();
+        return instance;
     }
 }

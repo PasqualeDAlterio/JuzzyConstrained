@@ -1,23 +1,18 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package additional_T1MF;
 
-import CIT2_Generator.CIT2_Generator;
 import generic.Tuple;
+import type1.sets.T1MF_Interface;
 import type1.sets.T1MF_Prototype;
 
 /**
- *
- * @author User
+ * T1MF modeling the negation of another T1MF (e.g. "not low")
+ * @author Pasquale
  */
 public class T1MF_Negate extends T1MF_Prototype {
     
-    private CIT2_Generator toNegate;
+    private T1MF_Interface toNegate;
     
-    public T1MF_Negate(String name, CIT2_Generator to_negate, Tuple support)
+    public T1MF_Negate(String name, T1MF_Interface to_negate, Tuple support)
     {
         super(name);
         toNegate=to_negate;
@@ -34,7 +29,9 @@ public class T1MF_Negate extends T1MF_Prototype {
     @Override
     public double getFS(double x)
     {
-        return 1-toNegate.getFS(x);
+        if(x>=support.getLeft()&&x<=support.getRight())
+            return 1-toNegate.getFS(x);
+        return 0;
     }
     
     @Override
@@ -55,5 +52,9 @@ public class T1MF_Negate extends T1MF_Prototype {
         throw new UnsupportedOperationException("Not supported yet.");
     }
     
+    public T1MF_Negate clone()
+    {
+        return new T1MF_Negate(name, toNegate, support);
+    }
     
 }

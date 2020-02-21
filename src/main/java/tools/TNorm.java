@@ -1,18 +1,14 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package tools;
 
 import generic.Tuple;
 import java.util.List;
 
 /**
- *
+ * Interface representing a T-Norm 
  * @author Pasquale
  */
-public interface TNorm
+public interface TNorm<T>
 {
-    Tuple doTNorm(List<Tuple> elements);
+    //Applies the TNorm operator to the list of elements
+    T doTNorm(List<T> elements);
 }

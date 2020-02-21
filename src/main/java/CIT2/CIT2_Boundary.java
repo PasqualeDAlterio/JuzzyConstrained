@@ -1,16 +1,9 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package CIT2;
 
 import CIT2_Generator.CIT2_Generator;
 import generic.Tuple;
 import java.util.Collection;
-import java.util.TreeSet;
 import tools.Interval;
-import type1.sets.T1MF_Interface;
 import type1.sets.T1MF_Prototype;
 
 /**
@@ -20,25 +13,25 @@ import type1.sets.T1MF_Prototype;
 public class CIT2_Boundary extends T1MF_Prototype{
     
     //First and last embedded sets in the FOU
-    private T1MF_Interface firstEmbeddedSet, lastEmbeddedSet;
+    private final CIT2_Generator firstEmbeddedSet, lastEmbeddedSet;
     //The generator set used to generate the set
-    private CIT2_Generator generatorSet;
+    private final CIT2_Generator generatorSet;
     //Left and right shifting applied to the generator set to obtain the FOU
-    private double leftShifting, rightShifting;
+    private final double leftShifting, rightShifting;
     //Boundary type to specify if it is the lowerbound or the upperbound MF
-    private CIT2_Boundary_Type type;
+    private final CIT2_Boundary_Type type;
     
     /**
      * Constructor of the boundary
-     * @param name name of the boundary
-     * @param type specifies if it is a lowerbound or an upperbound
-     * @param first_embedded_set first embedded set in the FOU
-     * @param last_embedded_set last embedded set in the FOU
-     * @param generator_set the generator set used to generate the set
-     * @param left_shifting maximum left shifting of the generator set to generate the FOU
-     * @param right_shifting maximum right shifting of the generator set to generate the FOU
+     * @param name Name of the boundary
+     * @param type Specifies if it is a lowerbound or an upperbound
+     * @param first_embedded_set First embedded set in the FOU
+     * @param last_embedded_set Last embedded set in the FOU
+     * @param generator_set The generator set used to generate the set
+     * @param left_shifting Maximum left shifting of the generator set to generate the FOU (i.e. left endpoint of the displacement set)
+     * @param right_shifting Maximum right shifting of the generator set to generate the FOU (i.e. right endpoint of the displacement set)
      */
-    public CIT2_Boundary(String name, CIT2_Boundary_Type type, T1MF_Interface first_embedded_set, T1MF_Interface last_embedded_set, CIT2_Generator generator_set, double left_shifting, double right_shifting)
+    public CIT2_Boundary(String name, CIT2_Boundary_Type type, CIT2_Generator first_embedded_set, CIT2_Generator last_embedded_set, CIT2_Generator generator_set, double left_shifting, double right_shifting)
     {
         super(name);
         this.type=type;
@@ -93,7 +86,7 @@ public class CIT2_Boundary extends T1MF_Prototype{
      * @param intervals The intervals that x could belong to
      * @return The membership degree of x w.r.t the boundary function, if it belongs to one of the intervals, -1 otherwise
      */
-    public double inIntervals(double x, Collection<Interval> intervals, CIT2_Boundary_Type type)
+    private double inIntervals(double x, Collection<Interval> intervals, CIT2_Boundary_Type type)
     {
         if(intervals==null)
             return -1;
@@ -128,10 +121,10 @@ public class CIT2_Boundary extends T1MF_Prototype{
     }
     
         
-//    public CIT2_Boundary clone()
-//    {
-//        return new CIT2_Boundary(name, type, firstEmbeddedSet.clone(), lastEmbeddedSet.clone(), generatorSet.clone(), leftShifting, rightShifting);
-//    }
+    public CIT2_Boundary clone()
+    {
+        return new CIT2_Boundary(name, type, firstEmbeddedSet.clone(), lastEmbeddedSet.clone(), generatorSet, leftShifting, rightShifting);
+    }
     
 }
 

@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package CIT2_Generator;
 
 import generic.Tuple;
@@ -14,7 +9,7 @@ import type1.sets.T1MF_Trapezoidal;
 
 /**
  *
- * @author User
+ * @author Pasquale
  */
 public class T1MF_Generator_Trapezoidal extends CIT2_Generator_Prototype{
         
@@ -85,15 +80,15 @@ public class T1MF_Generator_Trapezoidal extends CIT2_Generator_Prototype{
         return max_points;
     }
     
-//    @Override
-//    public T1MF_Generator_Trapezoidal clone()
-//    {
-//        T1MF_Generator_Trapezoidal result= new T1MF_Generator_Trapezoidal(name, trapezoid.getParameters(), trapezoid.getyLevels().clone());
-//        result.setLeftShoulder(isLeftShoulder);
-//        result.setRightShoulder(isRightShoulder);
-//        result.setSupport(this.support.clone());
-//        return result;
-//    }
+    @Override
+    public T1MF_Generator_Trapezoidal clone()
+    {
+        T1MF_Generator_Trapezoidal result= new T1MF_Generator_Trapezoidal(name, trapezoid.getParameters(), trapezoid.getyLevels().clone());
+        result.setLeftShoulder(isLeftShoulder);
+        result.setRightShoulder(isRightShoulder);
+        result.setSupport(this.support.clone());
+        return result;
+    }
     
     @Override
     public T1MF_Generator_Trapezoidal shiftFunction(String name, double shifting_factor)

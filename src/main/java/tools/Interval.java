@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package tools;
 
 import generic.Tuple;
@@ -10,7 +5,7 @@ import java.text.DecimalFormat;
 
 /**
  *
- * @author User
+ * @author Pasquale
  */
 public class Interval extends Tuple{
     
@@ -40,11 +35,5 @@ public class Interval extends Tuple{
     {
         return (x>=getLeft()&&x<=getRight());
     }
-    
-    public boolean areDisjoint(Interval a)
-    {
-        if(getLeft()<=a.getRight()&&a.getLeft()<=getRight())
-            return false;
-        return true;
-    }
+
 }

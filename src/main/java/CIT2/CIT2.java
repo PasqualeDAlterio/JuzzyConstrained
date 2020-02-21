@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package CIT2;
 
 
@@ -16,7 +11,6 @@ import intervalType2.sets.IntervalT2MF_Prototype;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import tools.JFreeChartPlotter;
-//import CIT2_Generator.T1MF_Shifted_MF;
 
 /**
  * Class implementing a CIT2 fuzzy set
@@ -25,20 +19,18 @@ import tools.JFreeChartPlotter;
 
 public class CIT2 extends IntervalT2MF_Prototype{
     
-    //The acceptable embedded sets of the CIT2. Implemented with lazy initialization
+    //The acceptable embedded sets of the CIT2
     private CIT2_Generator[] embeddedSets;
-    //This field stores the IT2 equivalent (i.e. with the same FOU) of the current CIT2 set
-    private IntervalT2MF_Generic equivalentIT2;
     //Generator set (GS) used to generate the CIT2
     private CIT2_Generator generatorSet;
-    /*The number of shifts determines the number of acceptable embedded sets (AES) that will be embedded in the FOU. Each shift represents an AES
-      The distance between the AES is equal to the shiftingStep. The size of the FOU, therefore, depends on boht the number of AES and the shiftingStep value
+    /*The number of shifts determines the number of acceptable embedded sets (AES) that will be embedded in the FOU. Each shift represents an AES.
+      The distance between the AESs is equal to shiftingStep. The size of the FOU, therefore, depends on both the number of AES and the shiftingStep value
     */
-    //Number of AES at the left of the generator set i.e. the AES obtained by shifting the generator set to the left
+    //Number of AES at the left of the generator set i.e. the AES obtained by shifting the generator set to the left by a shiftingStep amount
     private int leftAES;
     //Number of AES at the right of the generator set i.e. the AES obtained by shifting the generator set to the right
     private int rightAES;
-    //Distance between the AES
+    //Step size for each of the leftAES and rightAES shiftings. It is also the distance between two adjacent AES
     private double shiftingStep;
     //Random number generator, used to sample a random AES within the FOU in the continous case (i.e. unlimited number of AES)
     Random random_generator;
@@ -47,10 +39,10 @@ public class CIT2 extends IntervalT2MF_Prototype{
      * Constructor for the CIT2 fuzzy set.
      * 
      * @param name Name of the set
-     * @param generator_set The T1 generator set used to generate the CIT2 set
+     * @param generator_set The generator set used to generate the CIT2 set
      * @param left_AES Number of AES at the left of the generator set i.e. the AES obtained by shifting the generator set to the left
      * @param right_AES Number of AES at the right of the generator set i.e. the AES obtained by shifting the generator set to the right
-     * @param shifting_step distance between the AES
+     * @param shifting_step Step size for each of the left_AES and right_AES shiftings
      */
     
     public CIT2(String name, CIT2_Generator generator_set, int left_AES, int right_AES, double shifting_step)
@@ -64,8 +56,8 @@ public class CIT2 extends IntervalT2MF_Prototype{
         embeddedSets=allocateAES();
         initializeUpperbound();
         initializeLowerbound();
-        equivalentIT2=new IntervalT2MF_Generic("IT2_from_"+name, uMF, lMF);
         Tuple generator_support=generator_set.getSupport();
+        //Make the support set "wider", allowing the whole FOU to fit in
         support=new Tuple(generator_support.getLeft()-(shifting_step*left_AES), generator_support.getRight()+(shifting_step*right_AES));
     }
     
@@ -90,7 +82,7 @@ public class CIT2 extends IntervalT2MF_Prototype{
     
     /**
      * Sets the support set for the CIT2 set
-     * @param support the Tuple containing the new support set
+     * @param support The Tuple containing the new support set
      */
     @Override
     public void setSupport(Tuple support)
@@ -135,16 +127,6 @@ public class CIT2 extends IntervalT2MF_Prototype{
         lMF=new CIT2_Boundary(name, CIT2_Boundary_Type.LOWERBOUND, embeddedSets[0], embeddedSets[embeddedSets.length-1], generatorSet, shiftingStep*rightAES, shiftingStep*leftAES);
     }
     
-    public T1MF_Interface getUpperbound()
-    {
-        return uMF;
-    }
-    
-    public T1MF_Interface getLowerbound()
-    {
-        return lMF;
-    }
-    
     public CIT2_Generator[] getEmbeddedSets()
     {
         return embeddedSets;
@@ -152,10 +134,10 @@ public class CIT2 extends IntervalT2MF_Prototype{
     
     /**
      * Plots the AES of a collection of CIT2 sets
-     * @param name name of the plot
+     * @param name Name of the plot
      * @param sets CIT2 sets to plot
-     * @param xAxisRange range (over the x-axis) of the values to plot
-     * @param discretizationLevel discretization level to use to plot the sets
+     * @param xAxisRange Range of x values to plot (e.g. [0, 10])
+     * @param discretizationLevel Discretization level to use to plot the sets
      */
     
     public static void plotCIT2AES(String name, CIT2[] sets, Tuple xAxisRange, int discretizationLevel)
@@ -175,9 +157,9 @@ public class CIT2 extends IntervalT2MF_Prototype{
     
     /**
      * Plots the AES of the current CIT2 set
-     * @param name name of the plot
-     * @param xAxisRange range (over the x-axis) of the values to plot
-     * @param discretizationLevel discretization level to use to plot the sets
+     * @param name Name of the plot
+     * @param xAxisRange Range of x values to plot (e.g. [0, 10])
+     * @param discretizationLevel Discretization level to use to plot the sets
      */
     public void plotCIT2AES(String name, Tuple xAxisRange, int discretizationLevel)
     {
@@ -186,10 +168,10 @@ public class CIT2 extends IntervalT2MF_Prototype{
     
     /**
      * Plots the FOU of a collection of CIT2 sets
-     * @param name name of the plot
+     * @param name Name of the plot
      * @param sets CIT2 sets to plot
-     * @param xAxisRange range (over the x-axis) of the values to plot
-     * @param discretizationLevel discretization level to use to plot the sets
+     * @param xAxisRange Range of x values to plot (e.g. [0, 10])
+     * @param discretizationLevel Discretization level to use to plot the sets
      */
     public static void plotCIT2(String name, CIT2[] sets, Tuple xAxisRange, int discretizationLevel)
     {
@@ -198,8 +180,8 @@ public class CIT2 extends IntervalT2MF_Prototype{
     
     /**
      * Plots the CIT2 set
-     * @param xAxisRange range (over the x-axis) of the values to plot
-     * @param discretizationLevel discretization level to use to plot the sets
+     * @param xAxisRange Range of x values to plot (e.g. [0, 10])
+     * @param discretizationLevel Discretization level to use to plot the sets
      */
     public void plotCIT2(Tuple xAxisRange, int discretizationLevel)
     {
@@ -209,19 +191,20 @@ public class CIT2 extends IntervalT2MF_Prototype{
     
     /**
      * Computes the centroid of the set
-     * @param discretization number of discretization steps to use
-     * @return 
+     * @param discretization Number of discretization steps to use
+     * @return The Tuple containing the constrained centroid
      */
     @Override
     public Tuple getCentroid(int discretization)
     {
         double generator_centroid=generatorSet.getDefuzzifiedCentroid(discretization);
+        //Returns the Tuple made of the centroid of the leftmost and the centroid of the rightmost AES
         return new Tuple(generator_centroid-(leftAES*shiftingStep),generator_centroid+(rightAES*shiftingStep));
     }
     
     /**
      * Allocates the AES of the CIT2 set
-     * @return 
+     * @return The array with the AES allocated
      */
     private CIT2_Generator[] allocateAES()
     {
@@ -257,21 +240,20 @@ public class CIT2 extends IntervalT2MF_Prototype{
     
     /**
      * Converts the current set into an equivalent (i.e. with the same FOU) IT2 set
-     * @return the equivalent IT2 set (i.e. with the same FOU)
+     * @return The equivalent IT2 set (i.e. with the same FOU)
      */
     public IntervalT2MF_Interface toIT2()
     {
-         return equivalentIT2;
+         return new IntervalT2MF_Generic("IT2_from_"+name, uMF, lMF);
     }
     
     /**
-     * Samples a random AES
-     * @return Random AES
-     */
+     * Samples a random AES by shifting the generator set by a random value within the displacement interval (i.e. assumes the displacement interval is continuous)
+     * @return A random AES
+     */    
     public CIT2_Generator getRandomAES()
     {
         double left_max_shift, right_max_shift;
-        CIT2_Generator result;
         left_max_shift=shiftingStep*leftAES*-1;
         right_max_shift=shiftingStep*rightAES;
         if(left_max_shift==right_max_shift)
@@ -288,12 +270,12 @@ public class CIT2 extends IntervalT2MF_Prototype{
         return random_generator;
     }
     
-    public CIT2_Generator getLeftmostES()
+    public CIT2_Generator getLeftmostAES()
     {
         return embeddedSets[0];
     }
     
-    public CIT2_Generator getRightmostES()
+    public CIT2_Generator getRightmostAES()
     {
         return embeddedSets[embeddedSets.length-1];
     }

@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package CIT2;
 
 import CIT2_Explanations.RuleExplanation;
@@ -14,6 +9,7 @@ import intervalType2.sets.*;
 import intervalType2.system.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -23,14 +19,14 @@ import tools.Pair;
 import type1.sets.*;
 import type1.system.*;
 /**
- * Class modelling a rulebase of CIT2 rules
+ * Class modelling a CIT2 rulebase
  * @author Pasquale
  */
-public class CIT2_Rulebase implements FuzzyRulebase{
+public class CIT2_Rulebase{
     //The rules in the rulebase
     private final ArrayList<CIT2_Rule> CIT2Rules=new ArrayList<>();
     //Comparator to sort CIT2 set in ascending order by the left endpoint of their support set. Needed for switch index defuzzification
-    static private final CIT2_SupportComparator CIT2Comparator=new CIT2_SupportComparator();
+    static private final Comparator<CIT2> CIT2Comparator=new CIT2_SupportComparator();
     
     /**
      * Constructor with multiple rules
@@ -40,18 +36,18 @@ public class CIT2_Rulebase implements FuzzyRulebase{
     {
         CIT2Rules.addAll(Arrays.asList(rules));
     }
+    
     /**
      * Builds a CIT2 rulebase with 0 rules
      */
-    
     public CIT2_Rulebase()
     {
     }
     
     /**
-     * Adds the current_rule to the rulebase
+     * Adds a rule to the rulebase
      * @param current_rule The rule to be added to the rulebase
-     * @return true if the collection has changed (as specified by Collection.add())
+     * @return true if the collection has changed (as specified by Collection.add()), false otherwise
      */
     public boolean addRule(CIT2_Rule current_rule)
     {
@@ -65,11 +61,6 @@ public class CIT2_Rulebase implements FuzzyRulebase{
         return CIT2Rules;
     }
     
-    @Override
-    public double getCentroid()
-    {
-        return this.switchIndexDefuzzification(100).getAverage();
-    }
     
     /**
      * Builds a CIT2 rulebase starting from a T1 one. They have the same rules but each T1 is used as a generator set to build the corresponding CIT2 set
@@ -133,7 +124,7 @@ public class CIT2_Rulebase implements FuzzyRulebase{
     
     /**
      * Converts the current rulebase to an equivalent IT2 one (i.e. the IT2 sets involved have the same FOU as the CIT2 sets in the current rulebase)
-     * @return An equivalent IT2 Rulebase
+     * @return The equivalent IT2 Rulebase
      */
     public IT2_Rulebase toIT2()
     {
@@ -178,7 +169,7 @@ public class CIT2_Rulebase implements FuzzyRulebase{
     
     /**
      * Runs the inference with the switch index approach and produces an explanation for the endpoints
-     * @param discretization
+     * @param discretization Discretization step to use to defuzzify the T1 AES
      * @return The interval centroid and the explanation for its endpoints
      */
     public ExplainableCentroid explainableDefuzzification(int discretization)
@@ -301,7 +292,7 @@ public class CIT2_Rulebase implements FuzzyRulebase{
             current_consequent=consequent_mfs[i];
             //... note that the left endpoint of the firing strength of the rule has been used...
             current_rule=firing_intervals.get(current_consequent).getRight().getRight();
-            explaination_left_endpoint.add(new Pair(current_consequent, new RuleExplanation(current_rule, true)));
+            explaination_left_endpoint.add(new Pair<CIT2, RuleExplanation>(current_consequent, new RuleExplanation(current_rule, true)));
         }
         //...after the switch index...
         for(int i=left_switch_index;i<consequent_mfs.length;i++)
@@ -309,7 +300,7 @@ public class CIT2_Rulebase implements FuzzyRulebase{
             current_consequent=consequent_mfs[i];
             //...note that the right endpoint of the firing strenght of the rule has been used
             current_rule=firing_intervals.get(current_consequent).getRight().getLeft();
-            explaination_left_endpoint.add(new Pair(current_consequent, new RuleExplanation(current_rule, false)));
+            explaination_left_endpoint.add(new Pair<CIT2, RuleExplanation>(current_consequent, new RuleExplanation(current_rule, false)));
         }
         //Build explainations for the right endpoint
         //Before the switch index...
@@ -318,7 +309,7 @@ public class CIT2_Rulebase implements FuzzyRulebase{
             current_consequent=consequent_mfs[i];
             //...note that the right endpoint of the firing strength of the rule has been used...
             current_rule=firing_intervals.get(current_consequent).getRight().getLeft();
-            explaination_right_endpoint.add(new Pair(current_consequent, new RuleExplanation(current_rule, false)));
+            explaination_right_endpoint.add(new Pair<CIT2, RuleExplanation>(current_consequent, new RuleExplanation(current_rule, false)));
         }
         //After the switch index...
         for(int i=right_switch_index;i<consequent_mfs.length;i++)
@@ -326,9 +317,9 @@ public class CIT2_Rulebase implements FuzzyRulebase{
             //...note that the left endpoint of the firing strength of the rule has been used
             current_consequent=consequent_mfs[i];
             current_rule=firing_intervals.get(current_consequent).getRight().getRight();
-            explaination_right_endpoint.add(new Pair(current_consequent, new RuleExplanation(current_rule, true)));
+            explaination_right_endpoint.add(new Pair<CIT2, RuleExplanation>(current_consequent, new RuleExplanation(current_rule, true)));
         }
-        return new ExplainableCentroid(centroid_value, explaination_left_endpoint, explaination_right_endpoint, min_aes, max_aes, output);
+        return new ExplainableCentroid(centroid_value, getFiredFOU(), explaination_left_endpoint, explaination_right_endpoint, min_aes, max_aes, output);
     }
     
     /**
@@ -339,7 +330,7 @@ public class CIT2_Rulebase implements FuzzyRulebase{
     public Tuple switchIndexDefuzzification(int discretization)
     {
         //Run switch index saying that an explanation must not be produced
-        return doSwitchIndexDefuzzification(discretization, false).getIntervalCentroid();
+        return doSwitchIndexDefuzzification(discretization, false).getConstrainedCentroid();
     }
     
 //    Switch centroid function that does not generate the explanation    
@@ -490,7 +481,7 @@ public class CIT2_Rulebase implements FuzzyRulebase{
     {
         //Maps each CIT2 set into one of its AES chosen randomly
         HashMap<CIT2, T1MF_Interface> ct2_samples=new HashMap<>();
-        ArrayList<T1_Rule> t1_rules=new ArrayList(CIT2Rules.size());
+        ArrayList<T1_Rule> t1_rules=new ArrayList<>(CIT2Rules.size());
         CIT2 current_ct2;
         int i;
         T1_Antecedent[] current_antecedent_samples;
@@ -536,11 +527,11 @@ public class CIT2_Rulebase implements FuzzyRulebase{
  
     /**
      * Maps each CIT2 consequent set to the rules that generate their maximum firing interval, i.e. the rules that generate the highest left and right endpoints of the firing interval
-     * @return 
+     * @return A Map pairing each consequent CIT2 FS to the rules that generated the LB and UB of the firing strength for the set
      */
     private HashMap<CIT2, Pair<Tuple, Pair<CIT2_Rule, CIT2_Rule>>> getExplainableFiringIntervals()
     {
-        //<Consequent MF, Pair<Firing Strenghts, Pair<Rule for LB, Rule for UB>>>
+        //The structure of the Map is: <Consequent MF, Pair<Firing Strenghts, Pair<Rule for LB, Rule for UB>>>
         HashMap<CIT2, Pair<Tuple, Pair<CIT2_Rule, CIT2_Rule>>> firing_intervals=new HashMap<>();
         Tuple current_cuts, old_firing_interval;
         Pair<Tuple, Pair<CIT2_Rule, CIT2_Rule>> old_map_value;
@@ -554,7 +545,7 @@ public class CIT2_Rulebase implements FuzzyRulebase{
             //Get the consequent of the currrent rule
             current_consequent=current_rule.getConsequents()[0].getCIT2();
             //Get the firing interval of the current rule
-            current_cuts=current_rule.getFiringStrength(MinimumTNorm.factoryMethod());
+            current_cuts=current_rule.getFiringStrength(MinimumTNorm.getInstance());
             //If there was no firing interval in the map for the current consequent CIT2, add it
             if(firing_intervals.get(current_consequent)==null)
                 firing_intervals.put(current_consequent, new Pair(current_cuts, new Pair(current_rule, current_rule)));
@@ -595,7 +586,7 @@ public class CIT2_Rulebase implements FuzzyRulebase{
      */
     public IntervalT2MF_Interface getFiredFOU()
     {
-        IntervalT2MF_Interface total_fired_fou=null, current_rule_fired_fou=null;
+        IntervalT2MF_Interface total_fired_fou=null, current_rule_fired_fou;
         //For each rule...
         for(CIT2_Rule current_rule : CIT2Rules)
         {

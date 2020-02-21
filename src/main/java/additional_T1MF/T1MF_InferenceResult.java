@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package additional_T1MF;
 
 import generic.Tuple;
@@ -11,7 +6,7 @@ import type1.sets.T1MF_Prototype;
 
 
 /**
- *
+ * T1MF obtained as the result of the T1 inference process using the MIN operator
  * @author Pasquale
  */
 public class T1MF_InferenceResult extends T1MF_Prototype {
@@ -23,7 +18,13 @@ public class T1MF_InferenceResult extends T1MF_Prototype {
     {
         return new T1MF_InferenceResult(name, consequent, firingStrength);
     }
-    
+
+    /**
+     *
+     * @param name The name of the new MF
+     * @param consequent The set on which the inference operator must be applied
+     * @param firing_strength The value to use to carry out the inference
+     */
     public T1MF_InferenceResult(String name, T1MF_Interface consequent, double firing_strength)
     {
         super(name);
@@ -46,7 +47,9 @@ public class T1MF_InferenceResult extends T1MF_Prototype {
     @Override
     public double getFS(double x)
     {
-        return Math.min(consequent.getFS(x), firingStrength);
+        if(x>=support.getLeft()&&x<=support.getRight())
+            return Math.min(consequent.getFS(x), firingStrength);
+        return 0;
     }
     
     @Override

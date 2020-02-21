@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package CIT2_Generator;
 
 import java.util.ArrayList;
@@ -11,7 +6,7 @@ import type1.sets.T1MF_Gauangle;
 
 /**
  *
- * @author User
+ * @author Pasquale
  */
 public class T1MF_Generator_Gauangle extends CIT2_Generator_Prototype{
     
@@ -70,15 +65,15 @@ public class T1MF_Generator_Gauangle extends CIT2_Generator_Prototype{
         return max_points; 
     }
     
-//    @Override
-//    public T1MF_Generator_Gauangle clone()
-//    {
-//        T1MF_Generator_Gauangle clone=new T1MF_Generator_Gauangle(getName(), gauangle.getStart(), gauangle.getPeak(), gauangle.getEnd());
-//        clone.setLeftShoulder(isLeftShoulder);
-//        clone.setRightShoulder(isRightShoulder);
-//        clone.setSupport(this.support.clone());
-//        return clone;
-//    }
+    @Override
+    public T1MF_Generator_Gauangle clone()
+    {
+        T1MF_Generator_Gauangle clone=new T1MF_Generator_Gauangle(getName(), gauangle.getStart(), gauangle.getPeak(), gauangle.getEnd());
+        clone.setLeftShoulder(isLeftShoulder);
+        clone.setRightShoulder(isRightShoulder);
+        clone.setSupport(this.support.clone());
+        return clone;
+    }
 
     @Override
     public CIT2_Generator shiftFunction(String name, double shifting_step)

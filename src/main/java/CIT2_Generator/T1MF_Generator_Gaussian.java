@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package CIT2_Generator;
 
 import generic.Tuple;
@@ -14,7 +9,7 @@ import type1.sets.T1MF_Prototype;
 
 /**
  *
- * @author User
+ * @author Pasquale
  */
 public class T1MF_Generator_Gaussian extends CIT2_Generator_Prototype{
     
@@ -74,14 +69,14 @@ public class T1MF_Generator_Gaussian extends CIT2_Generator_Prototype{
         return result;
     }
     
-//    @Override
-//    public T1MF_Generator_Gaussian clone()
-//    {
-//        T1MF_Generator_Gaussian result= new T1MF_Generator_Gaussian(name, gaussian.getMean(), gaussian.getSpread());
-//        result.setLeftShoulder(isLeftShoulder);
-//        result.setRightShoulder(isRightShoulder);
-//        result.setSupport(support.clone());
-//        return result;
-//    }
+    @Override
+    public T1MF_Generator_Gaussian clone()
+    {
+        T1MF_Generator_Gaussian result= new T1MF_Generator_Gaussian(name, gaussian.getMean(), gaussian.getSpread());
+        result.setLeftShoulder(isLeftShoulder);
+        result.setRightShoulder(isRightShoulder);
+        result.setSupport(support.clone());
+        return result;
+    }
 
 }

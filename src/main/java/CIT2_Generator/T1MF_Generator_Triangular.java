@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package CIT2_Generator;
 
 import generic.Tuple;
@@ -14,7 +9,7 @@ import type1.sets.T1MF_Triangular;
 
 /**
  *
- * @author User
+ * @author Pasquale
  */
 public class T1MF_Generator_Triangular extends CIT2_Generator_Prototype{
     
@@ -76,14 +71,14 @@ public class T1MF_Generator_Triangular extends CIT2_Generator_Prototype{
         return max_points;
     }   
     
-//    public T1MF_Generator_Triangular clone()
-//    {
-//        T1MF_Generator_Triangular result= new T1MF_Generator_Triangular(name, triangle.getStart(), triangle.getPeak(), triangle.getEnd());
-//        result.setLeftShoulder(true);
-//        result.setRightShoulder(true);
-//        result.setSupport(support.clone());
-//        return result;
-//    }
+    public T1MF_Generator_Triangular clone()
+    {
+        T1MF_Generator_Triangular result= new T1MF_Generator_Triangular(name, triangle.getStart(), triangle.getPeak(), triangle.getEnd());
+        result.setLeftShoulder(true);
+        result.setRightShoulder(true);
+        result.setSupport(support.clone());
+        return result;
+    }
     
     @Override
     public CIT2_Generator shiftFunction(String name, double shifting_factor)

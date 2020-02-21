@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package CIT2_Explanations;
 
 import CIT2.CIT2;
@@ -17,7 +12,7 @@ import tools.MinimumTNorm;
 
 /**
  * Class containing the information about a rule that will be used to create the explanation for the interval centroid
- * @author User
+ * @author Pasquale
  */
 public class RuleExplanation {
     
@@ -70,7 +65,7 @@ public class RuleExplanation {
         //Store the Output value the rule refers to
         output=rule.getConsequents()[0].getOutput();
         //Store the firing of the rule
-        ruleFiring=rule.getFiringStrength(MinimumTNorm.factoryMethod());
+        ruleFiring=rule.getFiringStrength(MinimumTNorm.getInstance());
         //Depending on the firing valueused, inizialised the attributes of the objet
         if(isUsingUpperFiring){
             ruleFiringUsed=ruleFiring.getRight();
@@ -133,4 +128,5 @@ public class RuleExplanation {
     {
         return firingLevelUsed.toString();
     }
+
 }

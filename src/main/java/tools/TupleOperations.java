@@ -2,11 +2,14 @@ package tools;
 
 import generic.Tuple;
 
+/**
+ *  A class implementing various operations between Tuple objects
+ * @author Pasquale
+ */
 public class TupleOperations {
 
     private TupleOperations()
     {
-
     }
 
     public static Tuple intersection(Tuple a, Tuple b)

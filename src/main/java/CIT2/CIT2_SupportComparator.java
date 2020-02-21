@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package CIT2;
 
 import generic.Tuple;
@@ -10,7 +5,7 @@ import java.util.Comparator;
 
 /**
  * Comparator that compares 2 CIT2 sets by comparing the left endpoints of their support sets
- * @author psxpd2admin
+ * @author Pasquale
  */
 public class CIT2_SupportComparator implements Comparator<CIT2>{
     

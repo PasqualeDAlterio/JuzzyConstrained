@@ -1,22 +1,16 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package CIT2_Generator;
 
 import generic.Tuple;
-import java.util.ArrayList;
 import java.util.Collection;
 import tools.Interval;
 import type1.sets.T1MF_Interface;
 import type1.sets.T1MF_Prototype;
 
 /**
- *
- * @author User
+ * A prototype CIT2 generator containing functions used by the other generator MFs implemented in the library
+ * @author Pasquale
  */
-public abstract class CIT2_Generator_Prototype extends T1MF_Prototype implements CIT2_Generator{
+abstract class CIT2_Generator_Prototype extends T1MF_Prototype implements CIT2_Generator{
     
     protected Collection<Interval> minPoints, maxPoints;
     protected T1MF_Interface T1MF;
@@ -132,6 +126,8 @@ public abstract class CIT2_Generator_Prototype extends T1MF_Prototype implements
     protected abstract Collection<Interval> computeMaxPoints();
     
     protected abstract Collection<Interval> computeMinPoints();
+    
+    public abstract CIT2_Generator_Prototype clone();
     
     protected void setMinPoints(Collection<Interval> min_points)
     {
