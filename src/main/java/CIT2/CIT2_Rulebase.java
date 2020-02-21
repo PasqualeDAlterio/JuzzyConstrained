@@ -178,6 +178,7 @@ public class CIT2_Rulebase{
     /**
      * Runs the inference and defuzzifies the output using the switch index approach. If buildExplanation is true, also produces an explanation that shows which rules generated the endpoints of the interval centroid
      * @param discretization The discretization level to use
+     * @param buildExplanation Whether or not the explanation structure must be provided
      * @return The interval centroid with an explanation or a CentroidExplanation with only the interval centroid value if no explanation was requested
      */
     private ExplainableCentroid doSwitchIndexDefuzzification(int discretization, boolean buildExplanation)

@@ -80,9 +80,10 @@ public class CIT2_Boundary extends T1MF_Prototype{
      * Checks whether x belongs to one of the intervals. If it does, it returns its membership degree w.r.t the boundary function; it returns -1 otherwise
      * @param x The value to check
      * @param intervals The intervals that x could belong to
+     * @param boundary_type The boundary with respect to the membership degree will be computed if x is in the interval
      * @return The membership degree of x w.r.t the boundary function, if it belongs to one of the intervals, -1 otherwise
      */
-    private double inIntervals(double x, Collection<Interval> intervals, CIT2_Boundary_Type type)
+    private double inIntervals(double x, Collection<Interval> intervals, CIT2_Boundary_Type boundary_type)
     {
         if(intervals==null)
             return -1;
@@ -92,9 +93,9 @@ public class CIT2_Boundary extends T1MF_Prototype{
             if(current_interval.getLeft()+displacementInterval.getLeft()<=x&&current_interval.getRight()+displacementInterval.getRight()>=x)
             {
                 current_membership_degree=generatorSet.getFS(current_interval.getLeft());
-                if(type==CIT2_Boundary_Type.LOWERBOUND&&(current_membership_degree<final_membership_value||final_membership_value==-1))
+                if(boundary_type ==CIT2_Boundary_Type.LOWERBOUND&&(current_membership_degree<final_membership_value||final_membership_value==-1))
                     final_membership_value=current_membership_degree;
-                if(type==CIT2_Boundary_Type.UPPERBOUND&&(current_membership_degree>final_membership_value||final_membership_value==-1))
+                if(boundary_type ==CIT2_Boundary_Type.UPPERBOUND&&(current_membership_degree>final_membership_value||final_membership_value==-1))
                     final_membership_value=current_membership_degree;
             }
         }
