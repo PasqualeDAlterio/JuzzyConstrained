@@ -31,7 +31,7 @@ public class CIT2 extends IntervalT2MF_Prototype{
      *
      * @param name The name of the set
      * @param generator_set The T1 generator set used to generate the CIT2 set
-     * @param displacement_interval The displacement interval [a, b] (a<=0, b>=0) to use to generate the set
+     * @param displacement_interval The displacement interval [a, b] to use to generate the set
      */
 
     public CIT2(String name, CIT2_Generator generator_set, Tuple displacement_interval)

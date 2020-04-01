@@ -1,10 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.uon</groupId>
-    <artifactId>CIT2</artifactId>
-    <version>1.0-SNAPSHOT</version>
+
+    <groupId>com.github.pasqualedalterio</groupId>
+    <artifactId>Juzzy-Constrained</artifactId>
+    <version>0.5</version>
     <packaging>jar</packaging>
+
+    <name>Juzzy Constrained</name>
+    <description>Java library based on Juzzy for the implementation of constrained interval type-2 fuzzy sets and systems.</description>
+    <url>https://github.com/PasqualeDAlterio/JuzzyConstrained</url>
+
+    <licenses>
+        <license>
+            <name>BSD 3-Clause License</name>
+            <url>https://opensource.org/licenses/BSD-3-Clause</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Pasquale D'Alterio</name>
+            <email>pasquale.d'alterio@nottingham.ac.uk</email>
+            <organization>University of Nottingham</organization>
+            <organizationUrl>https://www.nottingham.ac.uk/</organizationUrl>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>https://github.com/PasqualeDAlterio/JuzzyConstrained.git</connection>
+        <url>https://github.com/PasqualeDAlterio/JuzzyConstrained</url>
+    </scm>
+
     <dependencies>
         <dependency>
             <groupId>com.github.chwagnlucid</groupId>
@@ -27,6 +54,82 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+        </repository>
+    </distributionManagement>
+
+    <build>
+
+        <plugins>
+
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.6.7</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.5</version>
+                <configuration>
+                    <keyname>Pasquale D'Alterio</keyname>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.0.1</version>
+                <configuration>
+                    <javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 <!--    To deploy with dependencies
 
