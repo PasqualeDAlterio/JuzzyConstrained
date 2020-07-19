@@ -11,7 +11,10 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.LegendItem;
 import org.jfree.chart.LegendItemCollection;
+import org.jfree.chart.axis.NumberTickUnit;
+import org.jfree.chart.axis.TickUnits;
 import org.jfree.chart.axis.ValueAxis;
+import org.jfree.chart.plot.Plot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYDifferenceRenderer;
@@ -20,6 +23,8 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import type1.sets.T1MF_Interface;
 import java.awt.Font;
+import java.util.Iterator;
+
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.CombinedDomainXYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
@@ -31,10 +36,12 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 public class JFreeChartPlotter {
     
     private static final Color[] USABLE_COLORS=new Color[]{Color.MAGENTA, Color.RED, Color.BLACK, Color.CYAN, Color.GREEN, Color.YELLOW, Color.PINK, Color.GRAY};
-    private static final Stroke SOLID_LINE=new BasicStroke(3f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND,1.0f);
-    private static final Stroke BASIC_STROKE=new BasicStroke(3.5f);
+    private static final Stroke SOLID_LINE=new BasicStroke(4f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND,1.0f);
+    private static final Stroke BASIC_STROKE=new BasicStroke(4.5f);
+    private static final Stroke DASHED_STROKE=new BasicStroke(0.8f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f, new float[] {6.0f, 6.0f}, 0.0f);
+    private static final Font BASE_FONT=new Font("Dialog", Font.PLAIN, 23);
     //The maximum Y value on the plot is slightly bigger than 1 otherwise the parts where LB=1 and UB=1 wouldn't show correctly
-    private static final double Y_AXIS_MAXIMUM=1.0002;
+    private static final double Y_AXIS_MAXIMUM=1.005;
     
     public static void plotMFs(String plotName, T1MF_Interface[] sets, Tuple xAxisRange, int xDisc)
     {
@@ -51,15 +58,21 @@ public class JFreeChartPlotter {
         HashSet<String> series_is=new HashSet<>();
         ValueAxis domainAxis = plot.getDomainAxis();
         ValueAxis rangeAxis = plot.getRangeAxis();
+        LegendItemCollection legend=new LegendItemCollection();
         //Discretize the boundary functions
         for(T1MF_Interface current_set : sets)
         {
             discretized_mfs.addSeries(discretizeMembershipFunction(current_set, xDisc, xAxisRange, series_is));
             plot.getRenderer().setSeriesStroke(k, BASIC_STROKE);
             plot.getRenderer().setSeriesPaint(k, getColor(k));
+            LegendItem legend_item=new LegendItem(current_set.getName(), getColor(k));
+            legend_item.setLabelFont(BASE_FONT);
+            legend.add(legend_item);
             k++;
         }
         plot.setDataset(discretized_mfs);
+        plot.setFixedLegendItems(legend);
+        plot=setupFontsAndBackground(plot);
         //Set the axis
         domainAxis.setRange(xAxisRange.getLeft(), xAxisRange.getRight());
         rangeAxis.setRange(0,Y_AXIS_MAXIMUM);
@@ -91,7 +104,9 @@ public class JFreeChartPlotter {
         for(int i=0;i<fou.length;i++)
         {
             current_color=getColor(i);
-            legend.add(new LegendItem(fou[i].getName(), current_color));
+            LegendItem legend_item=new LegendItem(fou[i].getName(), current_color);
+            legend_item.setLabelFont(BASE_FONT);
+            legend.add(legend_item);
             fou_renderer=initializeFOURenderer(current_color, 40);
             //Set the renderer for the current set (each DataSet structures contains 2 Series: UB and LB MF)
             plot.setRenderer(i, fou_renderer);
@@ -120,6 +135,7 @@ public class JFreeChartPlotter {
         //Set the legend
         plot.setFixedLegendItems(legend);
         plot.setForegroundAlpha(0.6f);
+        plot=setupFontsAndBackground(plot);
 //        plot.setSeriesRenderingOrder(SeriesRenderingOrder.REVERSE);
         doPlot(chart);
     }
@@ -153,7 +169,9 @@ public class JFreeChartPlotter {
         for(int i=0;i<sets.length;i++)
         {
             current_color=getColor(i);
-            legend.add(new LegendItem(sets[i].getName(), current_color));
+            LegendItem legend_item=new LegendItem(sets[i].getName(), current_color);
+            legend_item.setLabelFont(BASE_FONT);
+            legend.add(legend_item);
             fou_renderer=initializeFOURenderer(current_color, 100);
             //Set the renderer for the current set (each DataSet structures contains 2 Series: UB and LB MF)
             plot.setRenderer(i, fou_renderer);
@@ -163,7 +181,28 @@ public class JFreeChartPlotter {
         rangeAxis.setRange(0,Y_AXIS_MAXIMUM);
         //Set the legend
         plot.setFixedLegendItems(legend);
+        plot=setupFontsAndBackground(plot);
         return chart;
+    }
+
+
+    private static XYPlot setupFontsAndBackground(XYPlot plot)
+    {
+        Font font = BASE_FONT;
+        TickUnits ticks = new TickUnits();
+        for(double i=0;i<=1;i+=0.1)
+            ticks.add(new NumberTickUnit(i));
+        plot.setDomainGridlineStroke(DASHED_STROKE);
+        plot.setRangeGridlineStroke(DASHED_STROKE);
+        plot.getDomainAxis().setTickLabelFont(font);
+        plot.getRangeAxis().setStandardTickUnits(ticks);
+        plot.getRangeAxis().setTickLabelFont(font);
+        plot.getDomainAxis().setLabelFont(font);
+        plot.getRangeAxis().setLabelFont(font);
+        plot.setBackgroundPaint(Color.WHITE);
+        plot.setDomainGridlinePaint(Color.gray);
+        plot.setRangeGridlinePaint(Color.gray);
+        return plot;
     }
     
     private static void doPlot(JFreeChart chart)

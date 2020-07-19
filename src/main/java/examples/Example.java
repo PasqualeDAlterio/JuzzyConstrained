@@ -128,7 +128,6 @@ public class Example {
         JFreeChartPlotter.plotMFs("Tip partitioning", new CIT2[]{cit2_lowTipMF,
             cit2_mediumTipMF, cit2_highTipMF}, tip.getDomain(), 1000);
         
-        
         T1MF_Interface left_aes=result.getMax_es(), right_aes=result.getMin_es();
         
         JFreeChartPlotter.plotMFs("Fired FOU", new 
